@@ -1,0 +1,638 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cancer CHARTS</title>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crossfilter2/1.4.7/crossfilter.min.js"></script>
+    <script src="https://code.highcharts.com/highcharts.js"></script>
+    <script src="https://code.highcharts.com/modules/accessibility.js"></script>
+    <script src="https://code.highcharts.com/modules/exporting.js"></script>
+    <script src="csvjson.js"></script>
+    <style>
+        .first,.second{
+             justify-content: center;
+             align-items: center;
+             display: flex;
+        }
+    #p1{
+        width: 60%;
+    }
+    </style>
+
+</head>
+<body>
+    <div class="first">
+        <div id="p1"></div>
+        <div id="p2"></div>
+   </div>
+
+    
+   <div class="second">
+      <div id="p3"> </div>
+      <div id="p4"></div>
+      
+   </div>
+   <div id="p5"></div>
+
+</body>
+<script>
+   var pt=crossfilter(data);
+   var totaldim1=pt.dimension(d=>d.Age);
+
+
+var  Age=totaldim1.group().reduceSum(d=>d.Age);
+
+var test_smoking=totaldim1.group().reduceSum(d=>d.Smoking);
+function prepare(groups)
+      {
+       var categories=[];
+       var data=[];
+        
+       var gdata=groups.all();
+
+       gdata.forEach(d=>{
+            categories.push(d.key);
+           
+            
+
+             data.push(d.value);
+             
+       });
+
+   return {
+
+      categories:categories,
+      data:data
+       }   
+
+   }
+var prepare1=prepare(test_smoking);
+
+var options={
+
+chart :{
+       
+   renderTo:'p1',
+   type:'bar',
+   zoomType: 'Xy',
+   width:800,
+   height:600,
+
+
+},
+
+plotOptions: {
+  bar: {
+          dataLabels: {
+          enabled: true,
+         },
+         
+          }
+  
+      
+  
+},
+//this makes legend disable
+
+legend: {
+symbolPadding:0,
+symbolWidth: 0,
+symbolHeight: 0,
+squareSymbol:false,
+},
+
+credits: {
+enabled: false
+ },
+  
+title:{
+        text:' test_moking Age Chart '
+
+},
+subtitle:{
+      text:'15273',
+      style: {
+      color: '#0000FF',
+      fontWeight: 'bold'
+  },
+},
+ xAxis :
+           {              
+               
+               categories: prepare1.categories,
+                 title:{
+                      text:'Age',
+                 }
+            
+         },
+     
+
+
+  yAxis: {
+        
+       title:{
+              text: 'counts By Age',
+             
+           }        
+  },
+  
+
+
+
+
+series :[{
+name: '',
+
+data :prepare1.data,
+
+cursor: 'pointer',
+
+//this helps to get pop up after clicking  on selected points  in highcharts 
+point: {
+          events: {
+              click: function () {
+                  alert('Age : ' + this.category + ', Count: ' + this.y);
+                 
+                    
+
+
+           },
+      },
+  },
+ }
+],
+
+//tooltip is enabled here 
+
+tooltip: {
+  
+  style:{
+     color:'blue',
+  },
+
+  formatter: function () {
+      return  this.x +'<br/>'+
+          '<ul><li>Smoking Count: ' + this.y + '</li></ul>';
+  }
+
+
+},
+
+}
+var chart1=new Highcharts.chart(options);
+
+/**** this is for second chart *************/
+
+var test_Alcohol=totaldim1.group().reduceSum(d=>d.Alcohol_use);
+var prepare2=prepare(test_Alcohol);
+
+var options2={
+
+chart :{
+       
+   renderTo:'p2',
+   type:'column',
+   zoomType: 'Xy',
+   height:500,
+   width:600,
+  
+   },
+
+plotOptions: {
+  column: {
+          dataLabels: {
+          enabled: true,
+         },
+         
+          }
+  
+      
+  
+},
+//this makes legend disable
+
+legend: {
+symbolPadding:0,
+symbolWidth: 0,
+symbolHeight: 0,
+squareSymbol:false,
+},
+
+credits: {
+enabled: false
+ },
+  
+title:{
+        text:' test_alcohol Age Chart '
+
+},
+subtitle:{
+      text:'15273',
+      style: {
+      color: '#0000FF',
+      fontWeight: 'bold'
+  },
+},
+ xAxis :
+           {              
+               
+               categories: prepare2.categories,
+                 title:{
+                      text:'Age',
+                 }
+            
+         },
+     
+
+
+  yAxis: {
+        
+       title:{
+              text: 'counts By Alcohol',
+             
+           }        
+  },
+  series :[{
+name: '',
+
+data :prepare2.data,
+
+cursor: 'pointer',
+
+//this helps to get pop up after clicking  on selected points  in highcharts 
+point: {
+          events: {
+              click: function () {
+                  alert('Age : ' + this.category + ', Count: ' + this.y);
+                 
+                    
+
+
+           },
+      },
+  },
+ }
+],
+
+//tooltip is enabled here 
+
+tooltip: {
+  
+  style:{
+     color:'blue',
+  },
+
+  formatter: function () {
+      return  this.x +'<br/>'+
+          '<ul><li>Alcohol Count ' + this.y + '</li></ul>';
+  }
+
+
+},
+
+}
+var chart1=new Highcharts.chart(options2);
+
+/*** this is for third chart ***/
+ 
+var test_genetic=totaldim1.group().reduceSum(d=>d.Genetic_Risk);
+var prepare3=prepare(test_genetic);
+
+var options3={
+
+chart :{
+       
+   renderTo:'p3',
+   type:'column',
+   zoomType: 'Xy',
+   height:500,
+  
+   },
+
+plotOptions: {
+   column: {
+          dataLabels: {
+          enabled: true,
+         },
+         
+          }
+  
+      
+  
+},
+//this makes legend disable
+
+legend: {
+symbolPadding:0,
+symbolWidth: 0,
+symbolHeight: 0,
+squareSymbol:false,
+},
+
+credits: {
+enabled: false
+ },
+  
+title:{
+        text:' test_Genetics Age Chart '
+
+},
+subtitle:{
+      text:'15273',
+      style: {
+      color: '#0000FF',
+      fontWeight: 'bold'
+  },
+},
+ xAxis :
+           {              
+               
+               categories: prepare3.categories,
+                 title:{
+                      text:'Age',
+                 }
+            
+         },
+     
+
+
+  yAxis: {
+        
+       title:{
+              text: 'counts By Genetics Risk',
+             
+           }        
+  },
+  series :[{
+name: '',
+
+data :prepare3.data,
+
+cursor: 'pointer',
+
+//this helps to get pop up after clicking  on selected points  in highcharts 
+point: {
+          events: {
+              click: function () {
+                  alert('Age : ' + this.category + ', Count: ' + this.y);
+                 
+                    
+
+
+           },
+      },
+  },
+ }
+],
+
+//tooltip is enabled here 
+
+tooltip: {
+  
+  style:{
+     color:'blue',
+  },
+
+  formatter: function () {
+      return  this.x +'<br/>'+
+          '<ul><li>Genetics count: ' + this.y + '</li></ul>';
+  }
+
+
+},
+
+}
+var chart3=new Highcharts.chart(options3);
+
+/** this is for the 4th charts ********/
+
+var totaldim2=pt.dimension(d=>d.Balancediet);
+
+var test_cold=totaldim2.group().reduceSum(d=>d.Frequent_Cold);
+var prepare4=prepare(test_cold);
+
+var options4={
+
+chart :{
+       
+   renderTo:'p4',
+   type:'column',
+   zoomType: 'Xy',
+   height:500,
+  
+   },
+
+plotOptions: {
+   column: {
+          dataLabels: {
+          enabled: true,
+         },
+         
+          }
+  
+      
+  
+},
+//this makes legend disable
+
+legend: {
+symbolPadding:0,
+symbolWidth: 0,
+symbolHeight: 0,
+squareSymbol:false,
+},
+
+credits: {
+enabled: false
+ },
+  
+title:{
+        text:' test_Cold Balanced Diet Chart '
+
+},
+subtitle:{
+      text:'15273',
+      style: {
+      color: '#0000FF',
+      fontWeight: 'bold'
+  },
+},
+ xAxis :
+           {              
+               
+               categories: prepare4.categories,
+                 title:{
+                      text:'Balanced diet taken',
+                 }
+            
+         },
+     
+
+
+  yAxis: {
+        
+       title:{
+              text: 'counts By Frequenct Cold',
+             
+           }        
+  },
+  series :[{
+name: '',
+
+data :prepare4.data,
+
+cursor: 'pointer',
+
+//this helps to get pop up after clicking  on selected points  in highcharts 
+point: {
+          events: {
+              click: function () {
+                  alert('Balanced diet count  : ' + this.category + ', Count: ' + this.y);
+                 
+                    
+
+
+           },
+      },
+  },
+ }
+],
+
+//tooltip is enabled here 
+
+tooltip: {
+  
+  style:{
+     color:'blue',
+  },
+
+  formatter: function () {
+      return  this.x +'<br/>'+
+          '<ul><li> FrequenCold  count: ' + this.y + '</li></ul>';
+  }
+
+
+},
+
+}
+var chart3=new Highcharts.chart(options4);
+
+
+/****this is fifth chart***/
+
+
+var test_diet=totaldim1.group().reduceSum(d=>d.Balancediet);
+var prepare5=prepare(test_diet);
+
+var options5={
+
+chart :{
+       
+   renderTo:'p5',
+   type:'column',
+   zoomType: 'Xy',
+   height:500,
+  
+   },
+
+plotOptions: {
+   column: {
+          dataLabels: {
+          enabled: true,
+         },
+         
+          }
+  
+      
+  
+},
+//this makes legend disable
+
+legend: {
+symbolPadding:0,
+symbolWidth: 0,
+symbolHeight: 0,
+squareSymbol:false,
+},
+
+credits: {
+enabled: false
+ },
+  
+title:{
+        text:' test_Cold Balanced Diet Chart '
+
+},
+subtitle:{
+      text:'15273',
+      style: {
+      color: '#0000FF',
+      fontWeight: 'bold'
+  },
+},
+ xAxis :
+           {              
+               
+               categories: prepare4.categories,
+                 title:{
+                      text:' Age ',
+                 }
+            
+         },
+     
+
+
+  yAxis: {
+        
+       title:{
+              text: ' BalanceDiet taken',
+             
+           }        
+  },
+  series :[{
+name: '',
+
+data :prepare5.data,
+
+cursor: 'pointer',
+
+//this helps to get pop up after clicking  on selected points  in highcharts 
+point: {
+          events: {
+              click: function () {
+                  alert(' Age  : ' + this.category + ', Count: ' + this.y);
+                 
+                    
+
+
+           },
+      },
+  },
+ }
+],
+
+//tooltip is enabled here 
+
+tooltip: {
+  
+  style:{
+     color:'blue',
+  },
+
+  formatter: function () {
+      return  this.x +'<br/>'+
+          '<ul><li> BalnanceDiet  : ' + this.y + '</li></ul>';
+  }
+
+
+},
+
+}
+var chart4=new Highcharts.chart(options5);
+
+ 
+</script>
+</html>
