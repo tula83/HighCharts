@@ -1,5 +1,5 @@
 
-Creating Dashboard  Using  HighCharts 
+Creating Dashboard  Using  HighCharts : 
     The Highcharts library comes with all the tools you need to create reliable and secure data visualizations. 
     Built on JavaScript and TypeScript, all our charting libraries work with any back-end database or server stack. We offer wrappers for 
     the most popular programming languages (.Net, PHP, Python, R, Java) as well as iOS and Android, and frameworks like Angular, Vue, and React.
