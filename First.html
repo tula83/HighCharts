@@ -4,26 +4,35 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cancer CHARTS</title>
-    
+    <title>Dashboard</title>
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/crossfilter2/1.4.7/crossfilter.min.js"></script>
     <script src="https://code.highcharts.com/highcharts.js"></script>
     <script src="https://code.highcharts.com/modules/accessibility.js"></script>
     <script src="https://code.highcharts.com/modules/exporting.js"></script>
-    <script src="csvjson.js"></script>
-    <style>
-        .first,.second{
-             justify-content: center;
-             align-items: center;
-             display: flex;
-        }
-    #p1{
-        width: 60%;
-    }
-    </style>
+    <script src="data.js"></script>
 
+<style>
+
+    #p1,#p2,#p4,#p5{
+            width: 52em;
+             height:25em;
+    }
+    #p3{
+        width:80em;
+        height:25em;
+     }
+ 
+    .first,.second{
+    display: flex; 
+    margin:3px,1px,1px,1px;
+    }
+
+</style>
 </head>
+
 <body>
+     
     <div class="first">
         <div id="p1"></div>
         <div id="p2"></div>
@@ -33,20 +42,34 @@
    <div class="second">
       <div id="p3"> </div>
       <div id="p4"></div>
-      
+      <div id="p5"></div>
    </div>
-   <div id="p5"></div>
-
-</body>
-<script>
-   var pt=crossfilter(data);
-   var totaldim1=pt.dimension(d=>d.Age);
 
 
-var  Age=totaldim1.group().reduceSum(d=>d.Age);
 
-var test_smoking=totaldim1.group().reduceSum(d=>d.Smoking);
-function prepare(groups)
+  
+    <script>
+         
+       
+       var pt=crossfilter(dataset);
+
+    
+
+       var totaldim1=pt.dimension(d=>d.carrier);
+
+
+        var  carrier=totaldim1.group().reduceSum(d=>d.carrier);
+
+        var test=totaldim1.group().reduceSum(d=>d.count);
+
+//this of second chart 
+    var p1=pt.dimension(d=>d.monthDate); //this is the dimension for second chart 
+    var mg=p1.group().reduceSum(d=>d.count);
+    var mg2=p1.group().reduceSum(d=>d.monthDate);
+    //this is the dimension for second chart 
+   
+//***********for making   categories and  data  for series  i have called this for  first chart,third,4th and 5th chart**//
+  function prepare(groups)
       {
        var categories=[];
        var data=[];
@@ -69,290 +92,394 @@ function prepare(groups)
        }   
 
    }
-var prepare1=prepare(test_smoking);
+
+var temp1=prepare(test);
+let i=0;
+
 
 var options={
 
-chart :{
-       
-   renderTo:'p1',
-   type:'bar',
-   zoomType: 'Xy',
-   width:800,
-   height:600,
-
-
-},
-
-plotOptions: {
-  bar: {
-          dataLabels: {
-          enabled: true,
-         },
-         
-          }
-  
-      
-  
-},
-//this makes legend disable
-
-legend: {
-symbolPadding:0,
-symbolWidth: 0,
-symbolHeight: 0,
-squareSymbol:false,
-},
-
-credits: {
-enabled: false
- },
-  
-title:{
-        text:' test_moking Age Chart '
-
-},
-subtitle:{
-      text:'15273',
-      style: {
-      color: '#0000FF',
-      fontWeight: 'bold'
-  },
-},
- xAxis :
-           {              
-               
-               categories: prepare1.categories,
-                 title:{
-                      text:'Age',
-                 }
-            
-         },
-     
-
-
-  yAxis: {
-        
-       title:{
-              text: 'counts By Age',
+      chart :{
              
-           }        
-  },
-  
+         renderTo:'p1',
+         type:'bar',
+         zoomType: 'Xy',
+         
+      
 
-
-
-
-series :[{
-name: '',
-
-data :prepare1.data,
-
-cursor: 'pointer',
-
-//this helps to get pop up after clicking  on selected points  in highcharts 
-point: {
-          events: {
-              click: function () {
-                  alert('Age : ' + this.category + ', Count: ' + this.y);
-                 
-                    
-
-
-           },
       },
-  },
- }
-],
+      plotOptions: {
+        bar: {
+                dataLabels: {
+                enabled: true,
+               },
+               
+                }
+        
+            
+        
+    },
+ //this makes legend disable
 
-//tooltip is enabled here 
+    legend: {
+    symbolPadding:0,
+    symbolWidth: 0,
+    symbolHeight: 0,
+    squareSymbol:false,
+    },
 
-tooltip: {
+    credits: {
+    enabled: false
+       },
+        
+      title:{
+              text:' Test Carrier Chart '
+
+      },
+      subtitle:{
+            text:'15273',
+            style: {
+            color: '#0000FF',
+            fontWeight: 'bold'
+        },
+      },
+       xAxis :
+                 {              
+                     
+                     categories: temp1.categories,
+                       title:{
+                            text:'carrier',
+                       }
+                  
+               },
+           
+
+
+        yAxis: {
+              
+             title:{
+                    text: 'counts'
+                 }        
+        },
+        
+   
+    
+
+
+  series :[{
+     name: '',
+     
+     data :temp1.data,
+     
+     cursor: 'pointer',
+     
+     //this helps to get pop up after clicking  on selected points  in highcharts 
+     point: {
+                events: {
+                    click: function () {
+                        alert('Carrier : ' + this.category + ', Count: ' + this.y);
+                        this.select(null,true);//for multiple select make it true 
+                        var selectedpoints=this.series.chart.getSelectedPoints();
+                        console.log(selectedpoints);
+                        var filter_points=[];
+
+                        for(let index=0;index<selectedpoints.length;index++)
+                        {
+                             filter_points.push(selectedpoints[index].category);
+                        }
+                        console.log(filter_points);
+                         function multi(values){
+                             return function(v){
+                                  return values.indexOf(v)!==-1;
+                             }
+                         }
+
+                        if(filter_points.length>0)
+                        totaldim1.filterFunction(multi(filter_points));
+                        else
+                         totaldim1.filterAll();
+                        
+                          var newdata1=prepare(test);
+                          var newdata2=prepare(mg);
+                          console.log(newdata2);
+
+                       
+                            chart2.series[0].setData(newdata2.data);
+                           // chart1.series[0].setData(newdata1.data);
+                            //console.log(newdata2);
+                          
+
+
+                 },
+            },
+        },
+       }
+     ],
+
+     //tooltip is enabled here 
+
+     tooltip: {
+        
+        style:{
+           color:'blue',
+        },
+
+        formatter: function () {
+            return  this.x +'<br/>'+
+                '<ul><li>carriage' + this.y + '</li></ul>';
+        }
+
+      
+     },
+
+   }
+   
+   
   
-  style:{
-     color:'blue',
-  },
-
-  formatter: function () {
-      return  this.x +'<br/>'+
-          '<ul><li>Smoking Count: ' + this.y + '</li></ul>';
-  }
 
 
-},
+//**************THIS IS FOR SECOND CHART ***********************************************************//
+  
+   const mth = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'June', 'July', 'Aug', 'Sept', 'Oct', 'Nov', 'Dec']; 
+   
 
-}
-var chart1=new Highcharts.chart(options);
 
-/**** this is for second chart *************/
+//***this  for preparing  categores and data for second chart *************//
 
-var test_Alcohol=totaldim1.group().reduceSum(d=>d.Alcohol_use);
-var prepare2=prepare(test_Alcohol);
+function prepare2(groups)
+      {
+       var categories=[];
+       var data=[];
+        
+       var gdata=groups.all();
 
-var options2={
+       gdata.forEach(d=>{
+            
+             let index=new Date(d.key).getMonth().toLocaleString();
+             const last2 = new Date().getFullYear().toString().slice(-2);
+              
+             
+             categories.push(mth[index]+"-"+last2);
+             data.push(d.value);
+           
+       });
+
+   return {
+
+      categories:categories,
+      data:data
+       }   
+
+   }
+
+//now calling the function  for  preparing categories and data 
+var temp2=prepare2(mg);
+
+ var options2={
 
 chart :{
        
    renderTo:'p2',
    type:'column',
    zoomType: 'Xy',
-   height:500,
-   width:600,
-  
-   },
+
+},
+
+
+legend: {
+    symbolPadding:0,
+    symbolWidth: 0,
+    symbolHeight: 0,
+    squareSymbol:false,
+    },
+
 
 plotOptions: {
   column: {
-          dataLabels: {
+      dataLabels: {
           enabled: true,
-         },
          
-          }
+      },
+     
+   },
   
-      
   
-},
-//this makes legend disable
-
-legend: {
-symbolPadding:0,
-symbolWidth: 0,
-symbolHeight: 0,
-squareSymbol:false,
-},
-
-credits: {
-enabled: false
- },
+   },
   
 title:{
-        text:' test_alcohol Age Chart '
+        text:' Count by month '
 
 },
 subtitle:{
-      text:'15273',
-      style: {
-      color: '#0000FF',
-      fontWeight: 'bold'
-  },
-},
+            text:'15273',
+            style: {
+            color: '#0000FF',
+            fontWeight: 'bold',
+        }
+      },
+
  xAxis :
            {              
                
-               categories: prepare2.categories,
-                 title:{
-                      text:'Age',
-                 }
-            
-         },
+               categories: temp2.categories,
+              title:{
+
+                  text:'month',
+              }
+
+          },
      
 
 
   yAxis: {
         
        title:{
-              text: 'counts By Alcohol',
-             
+              text: 'counts'
            }        
   },
-  series :[{
-name: '',
+  tooltip: {
+        
+        style:{
+           color:'blue',
+        },
+      
+     },  
 
-data :prepare2.data,
-
-cursor: 'pointer',
-
-//this helps to get pop up after clicking  on selected points  in highcharts 
-point: {
-          events: {
-              click: function () {
-                  alert('Age : ' + this.category + ', Count: ' + this.y);
-                 
-                    
-
-
-           },
-      },
-  },
- }
-],
-
-//tooltip is enabled here 
-
-tooltip: {
+    credits: {
+    enabled: false
+    },
   
-  style:{
-     color:'blue',
-  },
+   series :[{
+   name: '',
+   data :temp2.data,
+   point: {
+                events: {
+                    click: function () {
+                        alert('Month : ' + this.category + ', Count: ' + this.y);
 
-  formatter: function () {
-      return  this.x +'<br/>'+
-          '<ul><li>Alcohol Count ' + this.y + '</li></ul>';
-  }
+                        this.select(null,true);//for multiple select make it true 
+                        var selectedpoints=this.series.chart.getSelectedPoints();
+                        console.log(selectedpoints);
+                        var filter_points=[];
 
+                        for(let index=0;index<selectedpoints.length;index++)
+                        {
+                             filter_points.push(selectedpoints[index].category);
+                        }
+                        console.log(filter_points);
+                         function multi(values){
+                             return function(v){
+                                  return values.indexOf(v)!==-1;
+                             }
+                         }
+
+                        if(filter_points.length>0)
+                       p1.filterFunction(multi(filter_points));
+                        else
+                         p1.filterAll();
+                        
+                          var newdata1=prepare(mg);
+                          var newdata2=prepare(mg2);  //mg for reduceSum count 
+                           console.log("new data1"+newdata2);
+
+                       
+                            chart1.series[0].setData(newdata2.data);
+                           //  chart1.series[0].setData(newdata1.data);
+
+
+
+                 },
+            },
+        },
+
+   
 
 },
 
-}
-var chart1=new Highcharts.chart(options2);
-
-/*** this is for third chart ***/
  
-var test_genetic=totaldim1.group().reduceSum(d=>d.Genetic_Risk);
-var prepare3=prepare(test_genetic);
+]
+
+}
+var chart1=new Highcharts.Chart(options);
+var chart2=new Highcharts.Chart(options2);
+
+
+
+//*****************************************//
+//this is for  count by error_sub_type
+
+var  count=pt.dimension(d=>d.error_sub_type);
+ 
+var count2=count.group().reduceSum(d=>d.count);
+
+//now calling the function  for  preparing categories and data 
+var  temp3=prepare(count2);
+
+
 
 var options3={
-
 chart :{
        
    renderTo:'p3',
-   type:'column',
+   type:'bar',
    zoomType: 'Xy',
-   height:500,
-  
-   },
 
-plotOptions: {
-   column: {
-          dataLabels: {
-          enabled: true,
-         },
-         
-          }
-  
-      
-  
 },
-//this makes legend disable
 
 legend: {
-symbolPadding:0,
-symbolWidth: 0,
-symbolHeight: 0,
-squareSymbol:false,
-},
+    symbolPadding:0,
+    symbolWidth: 0,
+    symbolHeight: 0,
+    squareSymbol:false,
+    },
+
+// for making success green i have used  series of colors then  used colorBypoint in plotoption
+
+colors: ['violet', 'violet', 'blue', 'blue', 'violet',
+        'green', 'violet'],
+
+plotOptions: {
+  
+           
+      bar:     {
+         colorByPoint: true,
+         dataLabels: {
+                enabled: true,
+            },
+
+
+             }, 
+      },
+
+    
+
+
 
 credits: {
-enabled: false
- },
+    enabled: false
+},
   
+    
+
 title:{
-        text:' test_Genetics Age Chart '
+        text:' Count by error_sub_type'
 
 },
 subtitle:{
-      text:'15273',
-      style: {
-      color: '#0000FF',
-      fontWeight: 'bold'
-  },
-},
+            text:'15273',
+            style: {
+            color:'#0000FF',
+            fontWeight:'bold',
+             },
+            
+      },
+
  xAxis :
            {              
                
-               categories: prepare3.categories,
+               categories: temp3.categories,
                  title:{
-                      text:'Age',
+                      text:'error_sub_type',
                  }
             
          },
@@ -362,110 +489,92 @@ subtitle:{
   yAxis: {
         
        title:{
-              text: 'counts By Genetics Risk',
-             
+              text: 'counts'
            }        
-  },
-  series :[{
-name: '',
-
-data :prepare3.data,
-
-cursor: 'pointer',
-
-//this helps to get pop up after clicking  on selected points  in highcharts 
-point: {
-          events: {
-              click: function () {
-                  alert('Age : ' + this.category + ', Count: ' + this.y);
-                 
-                    
-
-
-           },
-      },
-  },
- }
-],
-
-//tooltip is enabled here 
-
-tooltip: {
+    },
+    tooltip: {
+       
+        style:{
+           color:'blue',
+        },
+      
+     },
   
-  style:{
-     color:'blue',
-  },
+  series :[{ 
+    name:" ",    
+  data :temp3.data,
+  point: {
+                events: {
+                    click: function () {
+                        alert('Error Sub type : ' + this.category + ', Count: ' + this.y);
+                 },
+            },
+        },
 
-  formatter: function () {
-      return  this.x +'<br/>'+
-          '<ul><li>Genetics count: ' + this.y + '</li></ul>';
-  }
-
-
-},
+   },]
 
 }
-var chart3=new Highcharts.chart(options3);
+var charts=new Highcharts.Chart(options3);
 
-/** this is for the 4th charts ********/
+//**********************this is for count by aggregation type ********************c***//
 
-var totaldim2=pt.dimension(d=>d.Balancediet);
 
-var test_cold=totaldim2.group().reduceSum(d=>d.Frequent_Cold);
-var prepare4=prepare(test_cold);
 
+var aggr=pt.dimension(d=>d.aggregation_type);
+var count4=aggr.group().reduceSum(d=>d.count);
+
+//now calling the function  for  preparing categories and data 
+var  temp4=prepare(count4);
+ 
 var options4={
 
 chart :{
        
    renderTo:'p4',
-   type:'column',
+   type:'bar',
    zoomType: 'Xy',
-   height:500,
-  
-   },
 
-plotOptions: {
-   column: {
-          dataLabels: {
-          enabled: true,
-         },
-         
-          }
-  
-      
-  
 },
-//this makes legend disable
 
 legend: {
-symbolPadding:0,
-symbolWidth: 0,
-symbolHeight: 0,
-squareSymbol:false,
-},
+    symbolPadding:0,
+    symbolWidth: 0,
+    symbolHeight: 0,
+    squareSymbol:false,
+    },
 
+plotOptions: {
+  bar: {
+      dataLabels: {
+          enabled: true,
+      },
+      color :'orange'
+  }
+},
 credits: {
-enabled: false
- },
+    enabled: false
+},
   
 title:{
-        text:' test_Cold Balanced Diet Chart '
+        text:'Count by aggregation type'
 
 },
-subtitle:{
-      text:'15273',
-      style: {
-      color: '#0000FF',
-      fontWeight: 'bold'
-  },
-},
- xAxis :
+   subtitle:{
+            text:'15273',
+            style: {
+            color:'#0000FF',
+            fontWeight:'bold',
+             },
+      },
+
+
+      
+   xAxis :
            {              
                
-               categories: prepare4.categories,
+               categories: temp4.categories,
                  title:{
-                      text:'Balanced diet taken',
+                      text:'Aggregation type',
                  }
             
          },
@@ -475,110 +584,102 @@ subtitle:{
   yAxis: {
         
        title:{
-              text: 'counts By Frequenct Cold',
-             
+              text: 'counts'
            }        
-  },
-  series :[{
-name: '',
-
-data :prepare4.data,
-
-cursor: 'pointer',
-
-//this helps to get pop up after clicking  on selected points  in highcharts 
-point: {
-          events: {
-              click: function () {
-                  alert('Balanced diet count  : ' + this.category + ', Count: ' + this.y);
-                 
-                    
-
-
-           },
-      },
-  },
- }
-],
-
-//tooltip is enabled here 
-
-tooltip: {
+   },
+   tooltip: {
+       
+        style:{
+           color:'blue',
+        },
+      
+     },
   
-  style:{
-     color:'blue',
-  },
+  series :[{
+  name: '',
+  data :temp4.data,
+  point: {
+                events: {
+                    click: function () {
+                        alert('Aggregation type : ' + this.category + ', Count: ' + this.y);
+                 },
+            },
+        },
 
-  formatter: function () {
-      return  this.x +'<br/>'+
-          '<ul><li> FrequenCold  count: ' + this.y + '</li></ul>';
-  }
+   },]
+
+   }
+
+   var charts=new Highcharts.Chart(options4);
 
 
-},
 
-}
-var chart3=new Highcharts.chart(options4);
+//*****************************************//
 
+//for making success green i have used  series of colors then  used colorBypoint in plotoption
 
-/****this is fifth chart***/
+var error=pt.dimension(d=>d.error_type);
+var count5=error.group().reduceSum(d=>d.count);
 
+//now calling the function  for  preparing categories and data 
 
-var test_diet=totaldim1.group().reduceSum(d=>d.Balancediet);
-var prepare5=prepare(test_diet);
+var  temp5=prepare(count5);
+ 
 
 var options5={
+  colors: ['violet','violet','green'],
 
-chart :{
+  chart :{
        
    renderTo:'p5',
-   type:'column',
+   type:'bar',
    zoomType: 'Xy',
-   height:500,
-  
-   },
 
-plotOptions: {
-   column: {
-          dataLabels: {
-          enabled: true,
-         },
-         
-          }
-  
-      
-  
 },
-//this makes legend disable
 
 legend: {
-symbolPadding:0,
-symbolWidth: 0,
-symbolHeight: 0,
-squareSymbol:false,
-},
+    symbolPadding:0,
+    symbolWidth: 0,
+    symbolHeight: 0,
+    squareSymbol:false,
+    },
 
-credits: {
-enabled: false
- },
+plotOptions: {
+ 
   
-title:{
-        text:' test_Cold Balanced Diet Chart '
+  bar: {
+      colorByPoint:true,
+     
 
+    dataLabels: {
+                enabled: true,
+            },
+          },
+  
 },
-subtitle:{
-      text:'15273',
-      style: {
-      color: '#0000FF',
-      fontWeight: 'bold'
+  
+credits: {
+    enabled: false
+},
+
+ title:{
+        text:' Count by error type '
+
   },
-},
- xAxis :
+
+subtitle:{
+            text:'15273',
+            style: {
+            color: 'blue',
+            fontWeight: 'bold'
+          },
+      },
+     xAxis :
            {              
                
-               categories: prepare4.categories,
+                categories: temp5.categories,
                  title:{
-                      text:' Age ',
+                      text:'Error type',
                  }
             
          },
@@ -588,51 +689,42 @@ subtitle:{
   yAxis: {
         
        title:{
-              text: ' BalanceDiet taken',
-             
+              text: 'counts'
            }        
   },
-  series :[{
-name: '',
-
-data :prepare5.data,
-
-cursor: 'pointer',
-
-//this helps to get pop up after clicking  on selected points  in highcharts 
-point: {
-          events: {
-              click: function () {
-                  alert(' Age  : ' + this.category + ', Count: ' + this.y);
-                 
-                    
-
-
-           },
-      },
-  },
- }
-],
-
-//tooltip is enabled here 
-
-tooltip: {
   
-  style:{
-     color:'blue',
-  },
+  legend: {
+    symbolPadding: 0,
+    symbolWidth: 0,
+    symbolHeight: 0,
+    squareSymbol:false,
 
-  formatter: function () {
-      return  this.x +'<br/>'+
-          '<ul><li> BalnanceDiet  : ' + this.y + '</li></ul>';
-  }
+     },
+  tooltip: {
+      
+        style:{
+           color:'blue',
+        },
+      
+     },
 
+series:[{
+    name:" ",    
+    data :temp5.data,
+  point: {
+                events: {
+                    click: function () {
+                        alert('Error type  : ' + this.category + ', Count: ' + this.y);
+                 },
+            },
+        },
 
-},
+     },
+  ]
 
 }
-var chart4=new Highcharts.chart(options5);
+var charts=new Highcharts.Chart(options5);
 
- 
 </script>
+</body>
 </html>
